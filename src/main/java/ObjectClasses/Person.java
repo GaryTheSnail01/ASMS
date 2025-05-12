@@ -1,3 +1,7 @@
+package ObjectClasses;
+
+import SysUtils.IDGeneration;
+
 public class Person {
     private String name;
     private int age;
@@ -40,6 +44,6 @@ public class Person {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = IDGeneration.GenerateID(this.getClass().toString()); // Generate an ID based on the type of object
     }
 }

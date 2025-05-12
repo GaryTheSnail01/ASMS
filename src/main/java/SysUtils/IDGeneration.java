@@ -1,3 +1,5 @@
+package SysUtils;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Random;
@@ -11,20 +13,20 @@ public class IDGeneration {
         String idNumber;
 
         switch (classType){
-            case "Student":
+            case "ObjectClasses.Student":
                 idPrefix = "S";
                 break;
-            case "Teacher":
+            case "ObjectClasses.Teacher":
                 idPrefix = "T";
                 break;
-            case "Course":
+            case "ObjectClasses.Course":
                 idPrefix = "C";
                 break;
         }
 
         do {
             int randomNum = 1000 + random.nextInt(9000);
-            idNumber = idPrefix + " - " + randomNum;
+            idNumber = idPrefix + "-" + randomNum;
         } while (exsistingIDs.contains(idNumber));
 
         exsistingIDs.add(idNumber);
