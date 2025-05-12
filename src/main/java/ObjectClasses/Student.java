@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Student extends Person {
     private int gradeLevel;
-    private ArrayList<Course> enrolledCourses = new ArrayList<Course>();
+    private ArrayList<Course> enrolledCourses;
 
     public Student(String name, int age, String email, String id, int gradeLevel, ArrayList<Course> enrolledCourses){
         super(name, age, email, id);
