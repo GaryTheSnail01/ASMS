@@ -44,6 +44,6 @@ public class Person {
     }
 
     public void setId(String id) {
-        this.id = IDGeneration.GenerateID(this.getClass().toString()); // Generate an ID based on the type of object
+        this.id = id;
     }
 }
