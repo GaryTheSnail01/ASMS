@@ -8,6 +8,6 @@ public class Student extends Person {
 
     @Override
     public String toString(){
-        return "Student{id= " + getId() + ", name=" + getName() + ", age= " + getAge() + ", email=" + getEmail() + "}";
+        return "Student{id= " + getId() + ", name= " + getName() + ", age= " + getAge() + ", email= " + getEmail() + "}";
     }
 }
