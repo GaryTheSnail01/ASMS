@@ -47,7 +47,7 @@ public class DatabaseConnection {
             stmt.setString(4, student.getEmail());
 
             stmt.executeUpdate();
-            System.out.println("Success, student has been added.\n" + student.toString());
+            System.out.println("Success, student has been added.\n" + student);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -64,7 +64,20 @@ public class DatabaseConnection {
 
             stmt.executeUpdate();
             System.out.println("Success, " + student.getName() + "'s information has been updated.");
-            System.out.println(student.toString());
+            System.out.println(student);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteStudent(Student student){
+        String sql = "DELETE FROM students WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, student.getId());
+
+            stmt.executeUpdate();
+            System.out.println("Success, student has been deleted.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

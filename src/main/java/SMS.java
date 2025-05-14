@@ -2,14 +2,12 @@ import ObjectClasses.Student;
 import SysUtils.*;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class SMS {
     public static void main(String[] args) {
         DatabaseConnection db = DatabaseConnection.getInstance();
-        DatabaseConnection.createTable();
+        db.createTable();
 
-        Scanner scanner = new Scanner(System.in);
         int response = -1;
 
         while (response != 0) {
@@ -35,8 +33,8 @@ public class SMS {
                     handleEditStudent();
                     break;
                 case 5:
-//                    handleDeleteStudent();
-//                    break;
+                    handleDeleteStudent();
+                    break;
                 case 6:
 //                    handleImportFile();
 //                    break;
@@ -117,7 +115,7 @@ public class SMS {
             boolean updated = false;
 
             if (student != null) {
-                System.out.println(student.toString());
+                System.out.println(student);
 
                 while (editing) {
                     String attribute = Validations.readNonEmptyString("Enter attribute to change or 'back' to stop editing (name/age/email): ");
@@ -159,6 +157,37 @@ public class SMS {
                 System.out.println("Student not found.");
             }
         }
+    }
 
+    public static void handleDeleteStudent() {
+        DatabaseConnection db = DatabaseConnection.getInstance();
+        String response = "";
+
+        while (!response.equals("0")) {
+            response = Validations.readNonEmptyString("Enter student ID or '0' to return to the main menu: ");
+            if (response.equals("0")) break;
+
+            Student student = db.searchID(response);
+            if (student != null) {
+                boolean confirmDelete = true;
+
+                while (confirmDelete) {
+                    System.out.println(student);
+                    int input = Validations.readPositiveInt("Enter '0' to cancel this action or '1' to confirm deletion: ");
+
+                    if (input == 1) {
+                        db.deleteStudent(student);
+                        confirmDelete = false;
+                    } else if (input == 0) {
+                        System.out.println("Canceled deletion...");
+                        confirmDelete = false;
+                    } else {
+                        System.out.println("Invalid input.");
+                    }
+                }
+            } else {
+                System.out.println("Student not found.");
+            }
+        }
     }
 }
