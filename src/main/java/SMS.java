@@ -1,6 +1,7 @@
 import ObjectClasses.Student;
 import SysUtils.*;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class SMS {
@@ -28,8 +29,8 @@ public class SMS {
                     handleSearchID();
                     break;
                 case 3:
-//                    handleViewStudents();
-//                    break;
+                    handleViewStudents();
+                    break;
                 case 4:
 //                    handleEditStudent();
 //                    break;
@@ -87,5 +88,17 @@ public class SMS {
         } else {
             System.out.println("ID not found.");
         }
+    }
+
+    public static void handleViewStudents() {
+        DatabaseConnection db = DatabaseConnection.getInstance();
+
+        List<Student> students = db.getAllStudents();
+
+        System.out.println("\nStudents:");
+
+        students.stream()
+                .map(Student::toString)
+                .forEach(System.out::println);
     }
 }

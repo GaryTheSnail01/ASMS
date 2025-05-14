@@ -2,6 +2,8 @@ package SysUtils;
 
 import ObjectClasses.Student;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseConnection {
     private static DatabaseConnection instance;
@@ -12,7 +14,7 @@ public class DatabaseConnection {
         String url = "jdbc:h2:mem:";
 
         try {
-            this.conn = DriverManager.getConnection(url);
+            conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -67,6 +69,28 @@ public class DatabaseConnection {
             } else {
                 return null;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Student> getAllStudents(){
+        String sql = "SELECT * FROM students";
+        List<Student> result = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                int age = rs.getInt("age");
+                String email = rs.getString("email");
+                String id = rs.getString("id");
+
+                Student student = new Student(name, age, email, id);
+                result.add(student);
+            }
+            return result;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
