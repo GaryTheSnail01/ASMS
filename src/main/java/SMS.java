@@ -32,8 +32,8 @@ public class SMS {
                     handleViewStudents();
                     break;
                 case 4:
-//                    handleEditStudent();
-//                    break;
+                    handleEditStudent();
+                    break;
                 case 5:
 //                    handleDeleteStudent();
 //                    break;
@@ -82,9 +82,9 @@ public class SMS {
 
         String id = Validations.readNonEmptyString("Enter student ID: ");
 
-        Object student = db.searchID(id);
+        Student student = db.searchID(id);
         if (student != null) {
-            System.out.println(student.toString());
+            System.out.println(student);
         } else {
             System.out.println("ID not found.");
         }
@@ -100,5 +100,65 @@ public class SMS {
         students.stream()
                 .map(Student::toString)
                 .forEach(System.out::println);
+    }
+
+    public static void handleEditStudent() {
+        DatabaseConnection db = DatabaseConnection.getInstance();
+        String response = "";
+
+        while (!response.equals("0")) {
+            System.out.println("Editing a student...");
+            response = Validations.readNonEmptyString("Enter student ID or '0' to return to the main menu: ");
+
+            if (response.equals("0")) break; // Break the while loop before searching for an ID of 0
+
+            Student student = db.searchID(response);
+            boolean editing = true;
+            boolean updated = false;
+
+            if (student != null) {
+                System.out.println(student.toString());
+
+                while (editing) {
+                    String attribute = Validations.readNonEmptyString("Enter attribute to change or 'back' to stop editing (name/age/email): ");
+
+                    switch (attribute.toLowerCase()) {
+                        case "name":
+                            String newName = Validations.readNonEmptyString("Enter name: ");
+                            student.setName(newName);
+                            updated = true;
+                            break;
+                        case "age":
+                            int newAge = Validations.readPositiveInt("Enter age: ");
+                            student.setAge(newAge);
+                            updated = true;
+                            break;
+                        case "email":
+                            String newEmail = Validations.readEmail("Enter email: ");
+                            student.setEmail(newEmail);
+                            updated = true;
+                            break;
+                        case "id":
+                            System.out.println("IDs cannot be changed...");
+                            break;
+                        case "back":
+                            // Prevents unnecessary update if user updated a student prior to entering 'back'
+                            updated = false;
+                            editing = false;
+                            break;
+                        default:
+                            System.out.println("Invalid attribute.");
+                            break;
+                    }
+                    // If updated is true then we send our updated student to replace the original
+                    if (updated) {
+                        db.editStudent(student);
+                    }
+                }
+            } else {
+                System.out.println("Student not found.");
+            }
+        }
+
     }
 }

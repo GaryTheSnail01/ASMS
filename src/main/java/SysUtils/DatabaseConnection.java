@@ -53,7 +53,24 @@ public class DatabaseConnection {
         }
     }
 
-    public Object searchID(String inputID){
+    public void editStudent(Student student){
+        String sql = "UPDATE students SET name = ?, age = ?, email = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, student.getName());
+            stmt.setInt(2, student.getAge());
+            stmt.setString(3, student.getEmail());
+            stmt.setString(4, student.getId());
+
+            stmt.executeUpdate();
+            System.out.println("Success, " + student.getName() + "'s information has been updated.");
+            System.out.println(student.toString());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Student searchID(String inputID){
         String sql = "SELECT * FROM students WHERE id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
