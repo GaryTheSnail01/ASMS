@@ -2,6 +2,7 @@ import ObjectClasses.Student;
 import SysUtils.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SMS {
     public static void main(String[] args) {
@@ -36,9 +37,12 @@ public class SMS {
                     handleDeleteStudent();
                     break;
                 case 6:
+                    handleFilterByGrade();
+                    break;
+                case 7:
 //                    handleImportFile();
 //                    break;
-                case 7:
+                case 8:
 //                    handleExportFile();
 //                    break;
                 case 0:
@@ -58,8 +62,9 @@ public class SMS {
         System.out.println("3. View Students");
         System.out.println("4. Edit Student");
         System.out.println("5. Delete Student");
-        System.out.println("6. Import Students File");
-        System.out.println("7. Export Students File");
+        System.out.println("6. Filter by Grade");
+        System.out.println("7. Import Students File");
+        System.out.println("8. Export Students File");
         System.out.println("0. Exit");
     }
 
@@ -195,5 +200,30 @@ public class SMS {
                 System.out.println("Student not found.");
             }
         }
+    }
+
+    public static void handleFilterByGrade() {
+        DatabaseConnection db = DatabaseConnection.getInstance();
+        List<Student> students = db.getAllStudents();
+
+        int grade = Validations.readIntInRange("Enter grade: ", 1, 12);
+
+        long sum = students.stream()
+                .filter(student -> student.getGrade() == grade)
+                .count();
+
+        if (sum > 0) {
+            List<Student> filteredStudents = students.stream()
+                    .filter(student -> student.getGrade() == grade)
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            System.out.println("Total students in grade " + grade + ": " + sum);
+            System.out.println("List of sorted students:");
+            filteredStudents.forEach(System.out::println);
+        } else {
+            System.out.println("No students found.");
+        }
+
     }
 }
