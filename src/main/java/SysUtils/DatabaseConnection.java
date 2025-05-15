@@ -28,7 +28,7 @@ public class DatabaseConnection {
     }
 
     public static void createTable(){
-        String sql = "CREATE TABLE students (id VARCHAR(50) PRIMARY KEY, name VARCHAR(100), age INT, email VARCHAR(200))";
+        String sql = "CREATE TABLE students (id VARCHAR(50) PRIMARY KEY, name VARCHAR(100), grade INT, age INT, email VARCHAR(200))";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
@@ -38,13 +38,14 @@ public class DatabaseConnection {
     }
 
     public void insertStudent(Student student){
-        String sql = "INSERT INTO students (id, name, age, email) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO students (id, name, grade, age, email) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, student.getId());
             stmt.setString(2, student.getName());
-            stmt.setInt(3, student.getAge());
-            stmt.setString(4, student.getEmail());
+            stmt.setInt(3, student.getGrade());
+            stmt.setInt(4, student.getAge());
+            stmt.setString(5, student.getEmail());
 
             stmt.executeUpdate();
             System.out.println("Success, student has been added.\n" + student);
@@ -54,13 +55,14 @@ public class DatabaseConnection {
     }
 
     public void editStudent(Student student){
-        String sql = "UPDATE students SET name = ?, age = ?, email = ? WHERE id = ?";
+        String sql = "UPDATE students SET name = ?, grade = ?, age = ?, email = ? WHERE id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, student.getName());
-            stmt.setInt(2, student.getAge());
-            stmt.setString(3, student.getEmail());
-            stmt.setString(4, student.getId());
+            stmt.setInt(2, student.getGrade());
+            stmt.setInt(3, student.getAge());
+            stmt.setString(4, student.getEmail());
+            stmt.setString(5, student.getId());
 
             stmt.executeUpdate();
             System.out.println("Success, " + student.getName() + "'s information has been updated.");
@@ -92,10 +94,11 @@ public class DatabaseConnection {
 
             if (rs.next()) {
                 String name = rs.getString("name");
+                int grade = rs.getInt("grade");
                 int age = rs.getInt("age");
                 String email = rs.getString("email");
 
-                return new Student(name, age, email, inputID);
+                return new Student(name, grade, age, email, inputID);
             } else {
                 return null;
             }
@@ -113,11 +116,12 @@ public class DatabaseConnection {
 
             while (rs.next()) {
                 String name = rs.getString("name");
+                int grade = rs.getInt("grade");
                 int age = rs.getInt("age");
                 String email = rs.getString("email");
                 String id = rs.getString("id");
 
-                Student student = new Student(name, age, email, id);
+                Student student = new Student(name, grade, age, email, id);
                 result.add(student);
             }
             return result;
