@@ -67,11 +67,12 @@ public class SMS {
         DatabaseConnection db = DatabaseConnection.getInstance();
 
         String name = Validations.readNonEmptyString("Enter student's name: ");
+        int grade = Validations.readIntInRange("Enter student's grade: ", 1, 12);
         int age = Validations.readPositiveInt("Enter student's age: ");
         String email = Validations.readEmail("Enter student's email: ");
         String id = IDGeneration.GenerateID();
 
-        Student student = new Student(name, age, email, id);
+        Student student = new Student(name, grade, age, email, id);
         db.insertStudent(student);
     }
 
@@ -118,12 +119,17 @@ public class SMS {
                 System.out.println(student);
 
                 while (editing) {
-                    String attribute = Validations.readNonEmptyString("Enter attribute to change or 'back' to stop editing (name/age/email): ");
+                    String attribute = Validations.readNonEmptyString("Enter attribute to change or 'back' to stop editing (name/grade/age/email): ");
 
                     switch (attribute.toLowerCase()) {
                         case "name":
                             String newName = Validations.readNonEmptyString("Enter name: ");
                             student.setName(newName);
+                            updated = true;
+                            break;
+                        case "grade":
+                            int newGrade = Validations.readPositiveInt("Enter grade: ");
+                            student.setGrade(newGrade);
                             updated = true;
                             break;
                         case "age":

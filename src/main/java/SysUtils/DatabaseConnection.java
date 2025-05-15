@@ -38,7 +38,7 @@ public class DatabaseConnection {
     }
 
     public void insertStudent(Student student){
-        String sql = "INSERT INTO students (id, name, grade, age, email) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO students (id, name, grade, age, email) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, student.getId());
