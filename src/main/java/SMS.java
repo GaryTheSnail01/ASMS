@@ -1,6 +1,7 @@
 import ObjectClasses.Student;
 import SysUtils.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -215,7 +216,7 @@ public class SMS {
         if (sum > 0) {
             List<Student> filteredStudents = students.stream()
                     .filter(student -> student.getGrade() == grade)
-                    .sorted()
+                    .sorted(Comparator.comparing(Student::getName)) // Sort students by name alphabetically
                     .collect(Collectors.toList());
 
             System.out.println("Total students in grade " + grade + ": " + sum);
