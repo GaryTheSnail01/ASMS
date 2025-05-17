@@ -15,11 +15,7 @@ public class SMS {
         while (response != 0) {
             displayMenu();
 
-            try {
-                response = Validations.readPositiveInt("Enter Menu Selection: ");
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
-            }
+            response = Validations.readPositiveInt("Enter Menu Selection: ");
 
             switch (response) {
                 case 1:
@@ -41,11 +37,11 @@ public class SMS {
                     handleFilterByGrade();
                     break;
                 case 7:
-//                    handleImportFile();
-//                    break;
+                    FileHandling.readImportFile();
+                    break;
                 case 8:
-//                    handleExportFile();
-//                    break;
+                    handleExportFile();
+                    break;
                 case 0:
                     System.out.println("Closing program... Goodbye!");
                     break;
@@ -226,5 +222,21 @@ public class SMS {
             System.out.println("No students found.");
         }
 
+    }
+
+    public static void handleExportFile() {
+        DatabaseConnection db = DatabaseConnection.getInstance();
+        List<Student> students = db.getAllStudents();
+
+        System.out.println("Exporting student data...");
+        String fileName = Validations.readNonEmptyString("Enter file name: ");
+
+        boolean success = FileHandling.createStudentFile(fileName, students);
+
+        if (success) {
+            System.out.println("File created.");
+        } else {
+            System.out.println("Something went wrong, please try again.");
+        }
     }
 }

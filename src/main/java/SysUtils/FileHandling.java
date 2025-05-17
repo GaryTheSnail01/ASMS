@@ -2,10 +2,12 @@ package SysUtils;
 
 import ObjectClasses.Student;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static java.lang.Integer.parseInt;
 
 public class FileHandling {
     public static boolean createStudentFile(String fileName, List<Student> students){
@@ -26,18 +28,18 @@ public class FileHandling {
         }
 
         try {
-            File file = new File(fileName);
+            File file = new File(fileName + ".txt");
             if (file.createNewFile()) {
                 // add students info to file
                 try (FileWriter writer = new FileWriter(fileName + ".txt")){
-                    writer.write("Students");
+                    writer.write("Students:\n");
                     for (Student student : students) {
                         writer.write(student.toString());
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("File created");
+                System.out.println(file.getAbsolutePath());
                 fileCreation = true;
             } else {
                 System.out.println(fileName + ".txt already exists");
@@ -47,5 +49,55 @@ public class FileHandling {
         }
 
         return fileCreation;
+    }
+
+    public static void readImportFile() {
+        DatabaseConnection db = DatabaseConnection.getInstance();
+
+        System.out.println("Importing student data...");
+        String filePath = "import.txt";
+        List<Student> students = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                Student student = parseStudent(line);
+                if (student != null) {
+                    students.add(student);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (!students.isEmpty()) {
+            for (Student student : students) {
+                db.insertStudent(student);
+            }
+        }
+    }
+
+    public static Student parseStudent(String line) {
+        try {
+            String[] attributes = line.split("-");
+            System.out.println(Arrays.toString(attributes));
+            // Only taking student info then generating a new ID
+            // Format: name-grade-age-email
+            if (attributes.length == 4) {
+                String name = attributes[0].trim();
+                int grade = parseInt(attributes[1].trim());
+                int age = parseInt(attributes[2].trim());
+                String email = attributes[3].trim();
+                String id = IDGeneration.GenerateID();
+
+                return new Student(name, grade, age, email, id);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing line: " + line);
+        }
+        return null;
     }
 }
