@@ -1,6 +1,8 @@
 import ObjectClasses.Student;
 import SysUtils.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +48,7 @@ public class SMS {
                     System.out.println("Closing program... Goodbye!");
                     break;
                 default:
-                    System.out.println();
+                    System.out.println("Invalid option.");
                     break;
             }
         }
@@ -93,14 +95,48 @@ public class SMS {
 
     public static void handleViewStudents() {
         DatabaseConnection db = DatabaseConnection.getInstance();
-
         List<Student> students = db.getAllStudents();
 
-        System.out.println("\nStudents:");
+        // Split the students list in two
+        int middleStudentsIndex = students.size() / 2;
+        List<Student> students1 = new ArrayList<>(students.subList(0, middleStudentsIndex));
+        List<Student> students2 = new ArrayList<>(students.subList(middleStudentsIndex, students.size()));
 
-        students.stream()
-                .map(Student::toString)
-                .forEach(System.out::println);
+        Runnable printFirstHalfStudents = () -> {
+            students1.forEach(student -> {
+                System.out.println(student.toString());
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        };
+
+        Runnable printSecondHalfStudents = () -> {
+            students2.forEach(student -> {
+                System.out.println(student.toString());
+                try {
+                    Thread.sleep(800);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        };
+
+        Thread thread1 = new Thread(printFirstHalfStudents);
+        Thread thread2 = new Thread(printSecondHalfStudents);
+
+        thread1.start();
+        thread2.start();
+
+        // Main thread waits for threads to complete
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void handleEditStudent() {
