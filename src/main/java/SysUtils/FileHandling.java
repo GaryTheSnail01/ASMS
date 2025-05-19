@@ -51,14 +51,13 @@ public class FileHandling {
         return fileCreation;
     }
 
-    public static void readImportFile() {
+    public static boolean readImportFile(String fileName) {
         DatabaseConnection db = DatabaseConnection.getInstance();
-
-        System.out.println("Importing student data...");
-        String filePath = "import.txt";
         List<Student> students = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        boolean success = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -69,21 +68,26 @@ public class FileHandling {
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
+            return success;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         if (!students.isEmpty()) {
             for (Student student : students) {
-                db.insertStudent(student);
+                db.insertStudent(student); // Insert the student into the db
             }
+            success = true;
+        } else {
+            System.out.println("File is empty");
+            return success;
         }
+        return success;
     }
 
     public static Student parseStudent(String line) {
         try {
             String[] attributes = line.split("-");
-            System.out.println(Arrays.toString(attributes));
             // Only taking student info then generating a new ID
             // Format: name-grade-age-email
             if (attributes.length == 4) {
