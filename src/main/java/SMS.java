@@ -2,7 +2,6 @@ import ObjectClasses.Student;
 import SysUtils.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +10,7 @@ public class SMS {
     public static void main(String[] args) {
         DatabaseConnection db = DatabaseConnection.getInstance();
         db.createTable();
+        FileHandling.readImportFile("import.txt"); // Importing student data from import file on startup
 
         int response = -1;
 
@@ -39,7 +39,7 @@ public class SMS {
                     handleFilterByGrade();
                     break;
                 case 7:
-                    FileHandling.readImportFile();
+                    handleImportFile();
                     break;
                 case 8:
                     handleExportFile();
@@ -104,7 +104,7 @@ public class SMS {
 
         Runnable printFirstHalfStudents = () -> {
             students1.forEach(student -> {
-                System.out.println(student.toString());
+                System.out.println("Thread 1... " + student.toString());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -115,7 +115,7 @@ public class SMS {
 
         Runnable printSecondHalfStudents = () -> {
             students2.forEach(student -> {
-                System.out.println(student.toString());
+                System.out.println("Thread 2... " + student.toString());
                 try {
                     Thread.sleep(800);
                 } catch (InterruptedException e) {
@@ -274,5 +274,21 @@ public class SMS {
         } else {
             System.out.println("Something went wrong, please try again.");
         }
+    }
+
+    public static void handleImportFile() {
+        System.out.println("Importing student data...");
+        String fileName = Validations.readNonEmptyString("Enter file name: ");
+        fileName = fileName + ".txt";
+
+        boolean success = FileHandling.readImportFile(fileName);
+
+        if (success) {
+            System.out.println("Student data successfully imported.");
+        } else {
+            System.out.println("Something went wrong");
+        }
+
+
     }
 }
