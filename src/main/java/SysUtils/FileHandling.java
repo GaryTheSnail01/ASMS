@@ -4,7 +4,6 @@ import ObjectClasses.Student;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
@@ -32,14 +31,14 @@ public class FileHandling {
             if (file.createNewFile()) {
                 // add students info to file
                 try (FileWriter writer = new FileWriter(fileName + ".txt")){
-                    writer.write("Students:\n");
                     for (Student student : students) {
-                        writer.write(student.toString());
+                        // Format: id-name-grade-age-email
+                        writer.write(student.getId() + '-' + student.getName() + '-' + student.getGrade() + '-' + student.getAge() + '-' + student.getEmail() + '\n');
                     }
+                    System.out.println(file.getAbsolutePath());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println(file.getAbsolutePath());
                 fileCreation = true;
             } else {
                 System.out.println(fileName + ".txt already exists");
@@ -63,24 +62,26 @@ public class FileHandling {
             while ((line = reader.readLine()) != null) {
                 Student student = parseStudent(line);
                 if (student != null) {
-                    students.add(student);
+                    if (db.searchID(student.getId()) != null) {
+                        System.out.println("Student ID: " + student.getId() + " is already in the database.");
+                    } else {
+                        students.add(student);
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
-            return success;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        if (!students.isEmpty()) {
+        if (students.isEmpty()) {
+            System.out.println("File is empty");
+        } else {
             for (Student student : students) {
                 db.insertStudent(student); // Insert the student into the db
             }
             success = true;
-        } else {
-            System.out.println("File is empty");
-            return success;
         }
         return success;
     }
@@ -89,13 +90,13 @@ public class FileHandling {
         try {
             String[] attributes = line.split("-");
             // Only taking student info then generating a new ID
-            // Format: name-grade-age-email
-            if (attributes.length == 4) {
-                String name = attributes[0].trim();
-                int grade = parseInt(attributes[1].trim());
-                int age = parseInt(attributes[2].trim());
-                String email = attributes[3].trim();
-                String id = IDGeneration.GenerateID();
+            // Format: id-name-grade-age-email
+            if (attributes.length == 5) {
+                String id = attributes[0].trim();
+                String name = attributes[1].trim();
+                int grade = parseInt(attributes[2].trim());
+                int age = parseInt(attributes[3].trim());
+                String email = attributes[4].trim();
 
                 return new Student(name, grade, age, email, id);
             }

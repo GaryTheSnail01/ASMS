@@ -14,7 +14,7 @@ public class IDGeneration {
 
         do {
             int randomNum = 1000 + random.nextInt(9000);
-            idNumber = idPrefix + "-" + randomNum;
+            idNumber = idPrefix + randomNum;
         } while (existingIDs.contains(idNumber));
 
         existingIDs.add(idNumber);
